@@ -1,0 +1,188 @@
+---
+title: "Fecha y Tiempo en R"
+author: "Mauricio Carrillo"
+date: "15/4/2022"
+output: html_document
+---
+### Fijamos la ruta
+
+```{r}
+setwd("C:/Users/LUIS 1/Desktop/Series de Tiempo/R")
+```
+
+
+### Librerías que necesitamos
+
+```{r}
+library(lubridate)
+library(tseries)
+library(forecast)
+
+```
+
+
+### Opciones estándar en Rbase POSIxt: Portable Operating System Interface for time Codificación estádar
+
+```{r}
+x <- as.POSIXct("2022-04-19 11:45:34")
+y <- as.POSIXct("2022-04-19 11:45:34")
+x; y # Se obtiene lo mismo, pero qué hay detrás de esto? 
+
+unclass(x)
+
+unclass(y)
+```
+
+# Qué significa este número 1650386734?
+
+Es la cantidad de segundos que hay hasta esa fecha, desde el punto de referencia 01-01-1970 00:00:00:
+```{r}
+# Time zone
+#y$zone # Con POSIXlt podemos extraer componentes
+
+#x$zone # Con POSIXct no es posible porque solo devuelve el numero de segundos
+
+```
+### Otra forma: convertir con as.Date
+
+```{r}
+x = as.Date("2022-04-19")
+
+x; class(x)
+
+unclass(x)
+
+50 * 365 - 5 # Numero de días desde 01-01-1970 (no considera los años bisiestos)
+```
+
+
+### Otra forma: librería chron
+
+```{r}
+library(chron)
+
+x = chron("04/19/2022", "23:34:09")
+
+x
+
+class(x)
+
+unclass(x)
+
+```
+
+
+
+### Otro forma: strptime convierte desde caracteres de texto (strings to date and time)
+
+```{r}
+a = as.character(c("1993-12-30 23:45",
+                   
+                   "1994-11-05 11:43",
+                   
+                   "1992-03-09 21:54"))
+
+class(a)
+
+
+
+b = strptime(a, format = "%Y-%m-%d %H:%M") #format nos dice cómo se debe interpretar el texto
+
+b; class(b)
+
+```
+
+
+
+
+### Ahora vamos a usar el paquete lubridate que tiene funciones para manejar tiempos y fechas 
+# Formas diferentes de introducir fechas
+
+```{r}
+ymd(19931123) # Year / Month / Day
+
+dmy(23111993) # Day / Month / Year
+
+mdy(11231993) # Month / Day / Year
+
+```
+
+
+# Vamos a usar fechas y tiempo a la vez
+
+```{r}
+mytimepoint <- ymd_hm("1993-11-23 11:23", tz = "Europe/Prague") #tz: time zone parameter
+```
+
+
+# Time zones
+
+```{r}
+OlsonNames()
+
+mytimepoint
+
+class(mytimepoint)
+```
+
+
+# Extrayendo los componentes
+
+```{r}
+minute(mytimepoint)
+
+day(mytimepoint)
+
+hour(mytimepoint)
+
+year(mytimepoint)
+
+month(mytimepoint)
+```
+
+
+# Con esto podemos cambiar el valor de solo un componente (de 11 a 14)
+
+```{r}
+hour(mytimepoint) <- 14
+
+mytimepoint
+
+
+```
+
+
+## También se puede calcular el día de la semana que corresponde a nuestra fecha
+
+```{r}
+wday(mytimepoint)
+
+wday(mytimepoint, label=T, abbr=F) # los niveles que considera
+
+```
+
+
+# Podemos ver en otra zona a qué fecha y hora corresponde
+
+```{r}
+with_tz(mytimepoint, tz = "Europe/London")
+
+mytimepoint
+
+```
+
+# Calculando el intervalo entre las dos
+
+```{r}
+time1 = ymd_hm("1993-09-23 11:23", tz = "Europe/Prague")
+
+time2 = ymd_hm("1995-11-02 15:23", tz = "Europe/Prague")
+
+myinterval = interval(time1, time2); myinterval
+
+class(myinterval) # interval is an object class from lubridate
+```
+
+
+
+
