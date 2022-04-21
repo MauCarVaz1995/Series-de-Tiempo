@@ -1,0 +1,178 @@
+---
+title: "Objeto Serie temporal y Gráficos"
+author: "Mauricio Carrillo"
+date: "21/4/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Objeto serie de tiempo en R
+
+### Creamos unos datos
+
+```{r}
+mydata = runif(n = 50, min = 10, max = 45)
+
+```
+
+`ts` es la clase **time serie**,  Vamos a poner que empieza en 1956 - y con una frecuencia de 4 observaciones por año (cuatrimestres), por ejemplo.
+
+```{r}
+mytimeseries = ts(data = mydata, 
+                  start = 1956, frequency = 4)
+```
+
+
+### Veamos el gráfico de la serie
+
+```{r}
+plot(mytimeseries)
+```
+
+
+### Clase
+
+Como ya se había mencionado.
+
+```{r}
+class(mytimeseries)
+```
+
+
+### Tiempos
+
+```{r}
+time(mytimeseries)
+```
+
+
+### Redefiniendo el inicio "start"
+
+```{r}
+mytimeseries = ts(data = mydata, 
+                  start = c(1956,3), frequency = 4)
+
+mytimeseries
+
+```
+
+
+### Plots 
+
+**Nottem dataset**
+
+***Average Monthly Temperatures at Nottingham, 1920–1939***
+Description
+A time series object containing average air temperatures at Nottingham Castle in degrees Fahrenheit for 20 years.
+
+**Usage: **
+nottem
+
+**Source: **
+Anderson, O. D. (1976) Time Series Analysis and Forecasting: The Box-Jenkins approach. Butterworths. Series R.
+
+### Estándar
+
+```{r}
+plot(nottem) 
+
+```
+
+
+### Otros paquetes
+
+```{r}
+library(forecast)
+library(ggplot2)
+```
+
+
+
+```{r}
+autoplot((nottem))
+
+autoplot(nottem) + ggtitle("Autoplot of Nottingham temperature data")
+```
+
+
+
+
+
+### Datos faltantes y Outliers 
+
+Importando un  dataset con datos faltantes y outliers.
+
+
+```{r}
+mydata = read.csv('C:/Users/LUIS 1/Desktop/Series de Tiempo/R/Rmissing.csv')
+```
+
+
+### Convertir la segunda columna en una serie de tiempo sin especificar frecuencia
+
+```{r}
+myts = ts(mydata$mydata)
+myts
+```
+
+
+### Comprobar si hay NAs y outliers
+
+```{r}
+summary(myts)
+plot(myts)
+```
+
+
+### Usando zoo para localizar y rellenar valores faltantes
+
+```{r}
+library(zoo)
+myts.NAlocf = na.locf(myts) #LOCF: last observation carried forward (copia la última observacion antes del NA)
+myts.NAfill = na.fill(myts, 33) #rellena con el valor que le pongamos
+```
+```{r}
+myts.NAlocf
+```
+
+```{r}
+myts.NAfill
+```
+
+
+### Detección automática de outliers con la librería forecast
+
+```{r}
+library(forecast)
+myts1 = tsoutliers(myts)
+myts1
+plot(myts)
+```
+
+
+### También hay un método para NA en el paquete forecast
+
+```{r}
+myts.NAinterp = na.interp(myts) #rellena NA con interpolación
+myts.NAinterp
+```
+
+
+### Limpiando NAs y outliers con tsclean del paquete forecast 
+
+```{r}
+mytsclean = tsclean(myts)
+plot(mytsclean)
+summary(mytsclean)
+
+```
+
+
+
+
+
+
+
