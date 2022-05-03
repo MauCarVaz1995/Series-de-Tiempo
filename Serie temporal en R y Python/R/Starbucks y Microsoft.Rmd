@@ -241,7 +241,7 @@ SBUX.z = get.hist.quote(instrument="sbux", start="1993-03-01",
 
 
 ```{r}
-View(SBUX.z)
+head(SBUX.z)
 ```
 
 
